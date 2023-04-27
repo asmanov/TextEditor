@@ -1,10 +1,9 @@
 ﻿using System.Windows.Forms;
 using System.Drawing;
-using System.Windows.Forms;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using Button = System.Windows.Forms.Button;
 using TextBox = System.Windows.Forms.TextBox;
 using System.IO;
+using System;
 
 namespace TextEditor
 {
@@ -88,13 +87,63 @@ namespace TextEditor
             textBox2 = new TextBox();   
             textBox2.Location = new System.Drawing.Point(0, y: textBox.Location.Y + textBox.Height);
             textBox2.Width = 115;
-            
 
+
+            Image openImage = Image.FromFile("open-document.png");
+            Image saveImage = Image.FromFile("save-file-icon.png");
+            Image printImage = Image.FromFile("print.png");
+            Image fontImage = Image.FromFile("font-size.png");
+            Image colorImage = Image.FromFile("icons-color.png");
+
+
+            MenuStrip menu = new MenuStrip();
+            ToolStripMenuItem fileItem = new ToolStripMenuItem();
+            fileItem.Text = "FILE";
+            ToolStripMenuItem open = new ToolStripMenuItem("OPEN", openImage, Open_btn_Click) { ShortcutKeys = Keys.Control | Keys.O};
+            ToolStripMenuItem save = new ToolStripMenuItem("SAVE", saveImage, Save_btn_Click) { ShortcutKeys = Keys.Control | Keys.S};
+            ToolStripMenuItem print = new ToolStripMenuItem("PRINT", printImage, Print_Click) { ShortcutKeys = Keys.Control | Keys.P };
+            ToolStripMenuItem exit = new ToolStripMenuItem("EXIT", null, Exit_Click);
+            ToolStripSeparator line = new ToolStripSeparator();
+            fileItem.DropDownItems.AddRange((new ToolStripItem[] { open, save, print, line, exit }));
+
+            ToolStripMenuItem viewItem = new ToolStripMenuItem();
+            viewItem.Text = "VIEW";
+            ToolStripMenuItem font = new ToolStripMenuItem("FONT", fontImage, Btn_Click);
+            ToolStripMenuItem color = new ToolStripMenuItem("COLOR", colorImage, Color_Click);
+            viewItem.DropDownItems.AddRange((new ToolStripItem[] { font, color }));
+
+            menu.Items.Add(fileItem);
+            menu.Items.Add(viewItem);
             this.Controls.Add(textBox);
-            this.Controls.Add(btn);
+            //this.Controls.Add(btn);
             this.Controls.Add(textBox2);
-            this.Controls.Add(save_btn);
-            this.Controls.Add(open_btn);
+            //this.Controls.Add(save_btn);
+            //this.Controls.Add(open_btn);
+            this.Controls.Add(menu);
+        }
+
+        private void Print_Click(object sender, EventArgs e)
+        {
+            PrintDialog dialog = new PrintDialog();
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                System.Drawing.Printing.PrintDocument document = dialog.Document;
+            }
+        }
+
+        private void Color_Click(object sender, EventArgs e)
+        {
+            ColorDialog dialog = new ColorDialog();
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                this.BackColor = dialog.Color;
+                textBox.BackColor = dialog.Color;
+            }
+        }
+
+        private void Exit_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
 
         private void Open_btn_Click(object sender, System.EventArgs e)
@@ -144,6 +193,7 @@ namespace TextEditor
         TextBox textBox2;
         Button save_btn;
         Button open_btn;
+        //MenuStrip menu;
         #endregion
     }
 }
